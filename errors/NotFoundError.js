@@ -1,8 +1,6 @@
-const { PAGE_NOT_FOUND_ERROR } = require('./errors');
-
 class NotFoundError extends Error {
-  constructor() {
-    super(PAGE_NOT_FOUND_ERROR);
+  constructor(message) {
+    super(message);
     this.code = 404;
   }
 }

@@ -1,8 +1,10 @@
 const Card = require('../models/card');
-const CardCreationError = require('../errors/CardCreationError');
-const CardNotFoundError = require('../errors/CardNotFoundError');
-const LikeIncorrectDataError = require('../errors/LikeIncorrectDataError');
-const IncorrectDataError = require('../errors/IncorrectDataError');
+const {
+  CARD_CREATION_ERROR, CARD_INCORRECT_LIKE_DATA_ERROR, CARD_INCORRECT_ID_ERROR,
+  INCORRECT_DATA_ERROR,
+} = require('../errors/errors');
+const NotFoundError = require('../errors/NotFoundError');
+const checkError = require('../utils/checkError');
 
 const getCards = (req, res, next) => {
   const limit = 10;
@@ -14,7 +16,7 @@ const getCards = (req, res, next) => {
     .then((cards) => {
       res.status(200).send(cards);
     })
-    .catch((error) => next(error));
+    .catch((err) => checkError(err, INCORRECT_DATA_ERROR, next));
 };
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -29,18 +31,18 @@ const createCard = (req, res, next) => {
         createdAt: card.createdAt,
       });
     })
-    .catch(() => next(new CardCreationError()));
+    .catch((err) => checkError(err, CARD_CREATION_ERROR, next));
 };
 const deleteCard = (req, res, next) => {
   const _id = req.params.cardId;
   Card.findByIdAndRemove(_id)
     .then((card) => {
       if (!card) {
-        next(new CardNotFoundError());
+        return next(new NotFoundError(CARD_INCORRECT_ID_ERROR));
       }
-      res.status(200).send({});
+      return res.status(200).send({});
     })
-    .catch(() => next(new IncorrectDataError()));
+    .catch((err) => checkError(err, INCORRECT_DATA_ERROR, next));
 };
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
@@ -49,11 +51,11 @@ const likeCard = (req, res, next) => {
     { new: true },
   ).then((card) => {
     if (!card) {
-      return next(new CardNotFoundError());
+      return next(new NotFoundError(CARD_INCORRECT_ID_ERROR));
     }
     return res.status(200).send(card);
   })
-    .catch(() => next(new LikeIncorrectDataError()));
+    .catch((err) => checkError(err, CARD_INCORRECT_LIKE_DATA_ERROR, next));
 };
 
 const dislikeCard = (req, res, next) => {
@@ -63,11 +65,11 @@ const dislikeCard = (req, res, next) => {
     { new: true },
   ).then((card) => {
     if (!card) {
-      return next(new CardNotFoundError());
+      return next(new NotFoundError(CARD_INCORRECT_ID_ERROR));
     }
     return res.status(200).send({});
   })
-    .catch(() => next(new LikeIncorrectDataError()));
+    .catch((err) => checkError(err, CARD_INCORRECT_LIKE_DATA_ERROR, next));
 };
 module.exports = {
   getCards, createCard, deleteCard, likeCard, dislikeCard,

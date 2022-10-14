@@ -5,7 +5,7 @@ const USER_PATCH_INCORRECT_ERROR = 'Переданы некорректные д
 const CARD_CREATION_ERROR = 'Переданы некорректные данные при создании карточки.';
 const CARD_INCORRECT_ID_ERROR = 'Карточка с указанным _id не найдена.';
 const CARD_INCORRECT_LIKE_DATA_ERROR = 'Переданы некорректные данные для постановки/снятия лайка.';
-const USER_DATA_ERROR = 'Переданы некорректные данные.';
+const INCORRECT_DATA_ERROR = 'Переданы некорректные данные.';
 const USER_CREATION_DATA_ERROR = 'Переданы некорректные данные при создании пользователя.';
 const USER_EXISTS_ERROR = 'Пользователь уже существует.';
 const USER_PATCH_INCORRECT_AVATAR_ERROR = 'Переданы некорректные данные при обновлении аватара.';
@@ -22,5 +22,5 @@ module.exports = {
   INCORRECT_LOGIN_OR_PASSWORD_ERROR,
   USER_CREATION_DATA_ERROR,
   USER_EXISTS_ERROR,
-  USER_DATA_ERROR,
+  INCORRECT_DATA_ERROR,
 };

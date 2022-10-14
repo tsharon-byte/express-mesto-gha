@@ -19,4 +19,4 @@ server.use('/users', usersRoute);
 server.use('/cards', cardsRoute);
 server.use(pageNotFound);
 server.use(errorHandler);
-server.listen(3000);
+server.listen(process.env.PORT || 3000);
