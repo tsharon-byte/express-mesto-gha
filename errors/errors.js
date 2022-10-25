@@ -10,6 +10,9 @@ const USER_CREATION_DATA_ERROR = 'Переданы некорректные да
 const USER_EXISTS_ERROR = 'Пользователь уже существует.';
 const USER_PATCH_INCORRECT_AVATAR_ERROR = 'Переданы некорректные данные при обновлении аватара.';
 const INCORRECT_LOGIN_OR_PASSWORD_ERROR = 'Некорректный логин или пароль.';
+const UNAUTHORIZED_ERROR = 'Необходима авторизация';
+const CONFLICT_ERROR = 'Конфликт.';
+const FORBIDDEN_ERROR = 'Удаление запрещено.';
 module.exports = {
   PAGE_NOT_FOUND_ERROR,
   DEFAULT_MESSAGE_ERROR,
@@ -23,4 +26,7 @@ module.exports = {
   USER_CREATION_DATA_ERROR,
   USER_EXISTS_ERROR,
   INCORRECT_DATA_ERROR,
+  UNAUTHORIZED_ERROR,
+  CONFLICT_ERROR,
+  FORBIDDEN_ERROR,
 };

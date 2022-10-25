@@ -1,10 +1,11 @@
 const Card = require('../models/card');
 const {
   CARD_CREATION_ERROR, CARD_INCORRECT_LIKE_DATA_ERROR, CARD_INCORRECT_ID_ERROR,
-  INCORRECT_DATA_ERROR,
+  INCORRECT_DATA_ERROR, FORBIDDEN_ERROR,
 } = require('../errors/errors');
 const NotFoundError = require('../errors/NotFoundError');
 const checkError = require('../utils/checkError');
+const ForbiddenError = require('../errors/ForbiddenError');
 
 const getCards = (req, res, next) => {
   const limit = 10;
@@ -20,12 +21,13 @@ const getCards = (req, res, next) => {
 };
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
+  const { user } = req;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => {
       res.status(200).send({
         name: card.name,
         link: card.link,
-        owner: card.owner,
+        owner: user._id,
         likes: card.likes,
         _id: card._id,
         createdAt: card.createdAt,
@@ -35,12 +37,19 @@ const createCard = (req, res, next) => {
 };
 const deleteCard = (req, res, next) => {
   const _id = req.params.cardId;
-  Card.findByIdAndRemove(_id)
+  const { user } = req;
+  Card.findById(_id)
+    .populate(['owner'])
     .then((card) => {
       if (!card) {
         return next(new NotFoundError(CARD_INCORRECT_ID_ERROR));
       }
-      return res.status(200).send({});
+      if (JSON.stringify(card.owner._id) !== JSON.stringify(user._id)) {
+        return next(new ForbiddenError(FORBIDDEN_ERROR));
+      }
+
+      return Card.findByIdAndRemove(_id)
+        .then((doc) => res.status(200).send({ card: doc, message: 'Удалено' }));
     })
     .catch((err) => checkError(err, INCORRECT_DATA_ERROR, next));
 };

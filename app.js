@@ -1,22 +1,34 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const usersRoute = require('./routes/user');
 const cardsRoute = require('./routes/card');
+const authRoute = require('./routes/auth');
 const pageNotFound = require('./middlewares/pageNotFound');
 const errorHandler = require('./middlewares/errorHandler');
+const auth = require('./middlewares/auth');
+
+require('dotenv').config();
 
 const server = express();
 mongoose.connect('mongodb://localhost:27017/mestodb');
-server.use((req, res, next) => {
-  req.user = {
-    _id: '63462e50311689c8240da3c9',
-  };
-  next();
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // за 15 минут
+  max: 100, // можно совершить максимум 100 запросов с одного IP
 });
+
+// подключаем rate-limiter
+server.use(limiter);
+server.use(helmet());
 server.use(bodyParser.json());
+server.use('/', authRoute);
+server.use(auth);
 server.use('/users', usersRoute);
 server.use('/cards', cardsRoute);
 server.use(pageNotFound);
+server.use(errors());
 server.use(errorHandler);
 server.listen(process.env.PORT || 3000);

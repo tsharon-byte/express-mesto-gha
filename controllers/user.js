@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const {
   INCORRECT_DATA_ERROR,
@@ -10,9 +11,17 @@ const checkError = require('../utils/checkError');
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .select('_id name about avatar')
+    .select('_id name about avatar email')
     .then((users) => {
       res.status(200).send(users);
+    }).catch((err) => checkError(err, INCORRECT_DATA_ERROR, next));
+};
+const getUser = (req, res, next) => {
+  const { user } = req;
+  User.findById(user._id)
+    .select('_id name about avatar email')
+    .then((doc) => {
+      res.status(200).send(doc);
     }).catch((err) => checkError(err, INCORRECT_DATA_ERROR, next));
 };
 const updateUser = (req, res, next) => {
@@ -55,11 +64,21 @@ const getUsersById = (req, res, next) => {
     }).catch((err) => checkError(err, INCORRECT_DATA_ERROR, next));
 };
 const createUser = (req, res, next) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar }).then((user) => {
-    res.status(200).send(user);
-  }).catch((err) => checkError(err, USER_CREATION_DATA_ERROR, next));
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      email, password: hash, name, about, avatar,
+    }))
+    .then((user) => res.status(201).send({
+      email: user.email,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+    }))
+    .catch((err) => checkError(err, USER_CREATION_DATA_ERROR, next));
 };
 module.exports = {
-  getUsers, getUsersById, createUser, updateUser, updateUserAvatar,
+  getUsers, getUsersById, createUser, updateUser, updateUserAvatar, getUser,
 };
