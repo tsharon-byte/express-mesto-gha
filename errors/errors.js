@@ -11,7 +11,7 @@ const USER_EXISTS_ERROR = 'Пользователь уже существует.
 const USER_PATCH_INCORRECT_AVATAR_ERROR = 'Переданы некорректные данные при обновлении аватара.';
 const INCORRECT_LOGIN_OR_PASSWORD_ERROR = 'Некорректный логин или пароль.';
 const UNAUTHORIZED_ERROR = 'Необходима авторизация';
-const CONFLICT_ERROR = 'Конфликт.';
+const CONFLICT_ERROR = 'Конфликт. Пользователь с данным email уже существует.';
 const FORBIDDEN_ERROR = 'Удаление запрещено.';
 module.exports = {
   PAGE_NOT_FOUND_ERROR,

@@ -3,14 +3,11 @@ const UnauthorizedError = require('../errors/UnauthorizedError');
 const { UNAUTHORIZED_ERROR } = require('../errors/errors');
 
 const auth = (req, res, next) => {
-  const { authorization } = req.headers;
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return next(new UnauthorizedError(UNAUTHORIZED_ERROR));
-  }
-  const token = authorization.replace('Bearer ', '');
+  const token = req.cookies.jwt;
+  const { JWT_KEY = 'sekreto' } = process.env;
   let payload;
   try {
-    payload = jwt.verify(token, process.env.JWT_KEY);
+    payload = jwt.verify(token, JWT_KEY);
   } catch (err) {
     return next(new UnauthorizedError(UNAUTHORIZED_ERROR));
   }

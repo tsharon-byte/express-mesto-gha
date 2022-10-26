@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const { isEmail } = require('validator');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 const { UNAUTHORIZED_ERROR } = require('../errors/errors');
+const { URL_REGEXP } = require('../utils/constants');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -22,7 +23,7 @@ const userSchema = new mongoose.Schema({
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator(v) {
-        return /^https?:\/\/(www\.)?[a-z0-9-._~:/?#[\]@!$&'()*+,;=]{3,}#?/.test(v);
+        return URL_REGEXP.test(v);
       },
       message: 'Неправильный формат URL',
     },
@@ -39,7 +40,6 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8,
     select: false,
   },
 });

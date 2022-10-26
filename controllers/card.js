@@ -76,7 +76,7 @@ const dislikeCard = (req, res, next) => {
     if (!card) {
       return next(new NotFoundError(CARD_INCORRECT_ID_ERROR));
     }
-    return res.status(200).send({});
+    return res.status(200).send(card);
   })
     .catch((err) => checkError(err, CARD_INCORRECT_LIKE_DATA_ERROR, next));
 };

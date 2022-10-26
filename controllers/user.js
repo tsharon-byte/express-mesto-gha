@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {
   INCORRECT_DATA_ERROR,
@@ -79,6 +80,23 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => checkError(err, USER_CREATION_DATA_ERROR, next));
 };
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  const { JWT_KEY = 'sekreto' } = process.env;
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        JWT_KEY,
+        { expiresIn: '7d' },
+      );
+      return res
+        .cookie('jwt', token, {
+          httpOnly: true,
+        }).send({ message: 'Успешный логин' });
+    })
+    .catch((err) => next(err));
+};
 module.exports = {
-  getUsers, getUsersById, createUser, updateUser, updateUserAvatar, getUser,
+  getUsers, getUsersById, createUser, updateUser, updateUserAvatar, getUser, login,
 };

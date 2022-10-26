@@ -4,6 +4,7 @@ const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
 const usersRoute = require('./routes/user');
 const cardsRoute = require('./routes/card');
 const authRoute = require('./routes/auth');
@@ -24,6 +25,7 @@ const limiter = rateLimit({
 server.use(limiter);
 server.use(helmet());
 server.use(bodyParser.json());
+server.use(cookieParser());
 server.use('/', authRoute);
 server.use(auth);
 server.use('/users', usersRoute);
