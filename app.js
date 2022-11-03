@@ -11,6 +11,7 @@ const authRoute = require('./routes/auth');
 const pageNotFound = require('./middlewares/pageNotFound');
 const errorHandler = require('./middlewares/errorHandler');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 require('dotenv').config();
 
@@ -26,11 +27,17 @@ server.use(limiter);
 server.use(helmet());
 server.use(bodyParser.json());
 server.use(cookieParser());
+
+server.use(requestLogger);
+
 server.use('/', authRoute);
 server.use(auth);
 server.use('/users', usersRoute);
 server.use('/cards', cardsRoute);
 server.use(pageNotFound);
+
+server.use(errorLogger);
+
 server.use(errors());
 server.use(errorHandler);
 server.listen(process.env.PORT || 3000);
